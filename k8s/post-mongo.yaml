@@ -2,17 +2,21 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name:  ns-posthub--env--
-  labels:
+  labels: 
     name: ns-posthub--env--
 
+
+
 ---
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  comments-mongo
+  name:  post-mongo
   namespace: ns-posthub--env--
   labels:
-    name:  comments-mongo
+    name:  post-mongo
 spec:
   replicas: 1
   strategy:
@@ -22,15 +26,15 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      name: comments-mongo
+      name: post-mongo
   template:
     metadata:
       labels:
-        name:  comments-mongo
+        name:  post-mongo
     spec:
       containers:
       - image:  mongo
-        name:  comments-mongo
+        name:  post-mongo
         resources:
           requests:
             cpu: "250m"
@@ -40,19 +44,19 @@ spec:
             memory: "2500M"    
         ports:
         - containerPort:  27017
-          name:  comments-mongo
+          name:  post-mongo
 
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name:  comments-mongo-service
+  name:  post-mongo-service
   namespace: ns-posthub--env--
 spec:
   selector:
-    name: comments-mongo
+    name: post-mongo
   type: ClusterIP
   ports:
-  - name:  comments-mongo
+  - name:  post-mongo
     port:  27020
     targetPort:  27017

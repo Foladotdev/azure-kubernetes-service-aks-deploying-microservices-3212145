@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name:  ns-posthub--env--
+  name: ns-posthub--env--
   labels:
     name: ns-posthub--env--
 
@@ -11,43 +11,47 @@ kind: Deployment
 metadata:
   name: ui--env--
   namespace: ns-posthub--env--
+  labels:
+    app: ui--env--
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: ui--env--
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   template:
     metadata:
       labels:
         app: ui--env--
     spec:
       containers:
-      - name: ui--env--
-        image: __ImageTag__
-        resources:
-          requests:
+        - name: ui--env--
+          image: __imageTag__
+          resources:
+            requests:
               cpu: 250m
               memory: 350Mi
-          limits:
-            memory: "900Mi"
-            cpu: "1100m"
-        ports:
+            limits:
+              cpu: 1100m
+              memory: 900Mi
+      ports:
         - containerPort: 3000
-
-
 
 ---
 kind: Service
 apiVersion: v1
 metadata:
-  name:  ui-service--env--
+  name: ui-service--env--
   namespace: ns-posthub--env--
 spec:
   selector:
-    app:  ui--env--
-  type:  ClusterIP
+    app: ui--env--
+  type: ClusterIP
   ports:
-  - name:  ui--env--
-    port:  3000
-    targetPort:  3000
-    protocol:  TCP
+    - name: ui--env--
+      port: 3000
+      targetPort: 3000
